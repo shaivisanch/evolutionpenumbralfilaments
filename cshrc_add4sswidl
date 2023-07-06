@@ -1,0 +1,8 @@
+setenv PATH $PATH\:$HOME/bin
+alias idl /Applications/exelis/idl85/bin/idl
+alias aquamacs "open /Applications/Aquamacs.app/"  #Sanjiv
+	
+#setenv IDL_STARTUP ~/.idl_startup
+setenv IDL_STARTUP /Users/tiwari/idl_startup.pro 
+
+#set_logenv, 'SSWDB', '/Users/tiwari/sswdb'   ;;copy paste this line in terminal whenever you need sswdb;; or copy hinode from sswdb in home directory /Users/tiwari which is somehow default path for sswdb in my current setup 

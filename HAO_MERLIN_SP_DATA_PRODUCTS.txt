@@ -1,0 +1,110 @@
+HAO-MERLIN SP data:
+
+SP data products
+
+Whenever using Hinode/SP data, please reference the different data products by using the appropriate DOI:
+
+    Level 1 Hinode/SP data: 10.5065/D6T151QF.
+    Level 1.5 Hinode/SP data: 10.5065/D6P848Z8.
+    Level 2 Hinode/SP data: 10.5065/D6JH3J8D.
+
+
+Brief description of the data products:
+
+    Level 1 data: calibrated 3D data (spectral x spatial x 4 Stokes parameters) ready for scientific analysis. These data are stored as individual FITS files for each SP integration, grouped into directories for each commanded SP operation, and labeled by the UT start time of that observation (ie 20061110_130011 = yyyymmdd_hhmmss). Level 1 processing skips any files in which substantial telemetry packet loss has occurred. The corresponding FITS files are deleted from the Level 1 data.
+    Level 1.5 Quicklook: IDL save files that contain quick analyses of the Level 1 SP data to produce images of measures of the longitudinal and transverse field, Doppler velocity, continuum intensity, solar coordinates, and many other parameters describing the data and the reduction process. Details about the Level 1.5 data products can be found in section 3.2.13 of the sp_prep paper.
+    Level 2 data: results of full Milne-Eddington inversion of the Level1 data, available as FITS images of the inversion parameters and ancillary quantities. See below for detailed information.
+
+ 
+Level 1 data
+
+Level 1 data consist of a sequence of calibrated 3D data (spectral x spatial x 4 Stokes parameters) ready for scientific analysis. These data are stored as individual FITS files, one per scanning step. Each FITS file contains a 3-dimensional array consisting of four images, corresponding to the four Stokes parameters (in the order: I, Q, U and V) as a function of wavelength and position along the slit. All the FITS files for one data-set are packed into a tar file and tagged with the date and time of the beginning of the operation, for downloading convenience.
+
+The Hinode/SP calibration software (sp_prep) is largely the work of Bruce Lites (HAO) and can be found in the SolarSoft hinode/sot directory tree.
+
+ 
+Level 2 data
+
+The SOT/SP level2 data are outputs from spectral line inversions using the HAO "MERLIN" inversion code developed under the Community Spectro-polarimetric Analysis Center (CSAC) initiative. Each Level 2 dataset is stored in a FITS file containing 42 extensions, one per inversion parameter or ancillary data product. In order to read a specific extension in the FITS file, use the IDL READFITS function with the EXT=n tag. For instance, to extract the magnetic field strength:
+IDL> image = READFITS('yyyymmdd_hhmmss.fits', EXT=0)
+
+The Level 2 FITS extensions are organized as follows:
+
+    ext= 1 Field_Strength
+    ext= 2 Field_Inclination
+    ext= 3 Field_Azimuth
+    ext= 4 Doppler_Shift1
+    ext= 5 Doppler_Shift2
+    ext= 6 Doppler_Width
+    ext= 7 Line_Strength
+    ext= 8 Damping
+    ext= 9 Source_Function
+    ext= 10 Source_Function_Gradient
+    ext= 11 Macro_Turbulence
+    ext= 12 Stray_Light_Fill_Factor
+    ext= 13 Stray_Light_Shift
+    ext= 14 Field_Strength_Error
+    ext= 15 Field_Inclination_Error
+    ext= 16 Field_Azimuth_Error
+    ext= 17 Doppler_Shift1_Error
+    ext= 18 Doppler_Shift2_Error
+    ext= 19 Doppler_Width_Error
+    ext= 20 Line_Strength_Error
+    ext= 21 Damping_Error
+    ext= 22 Source_Function_Error
+    ext= 23 Source_Function_Gradient_Error
+    ext= 24 Macro_Turbulence_Error
+    ext= 25 Stray_Light_Fill_Factor_Error
+    ext= 26 Stray_Light_Shift_Error
+    ext= 27 ChiSq_I
+    ext= 28 ChiSq_Q
+    ext= 29 ChiSq_U
+    ext= 30 ChiSq_V
+    ext= 31 ChiSq_Total
+    ext= 32 Continuum_Intensity
+    ext= 33 Original_Continuum_Intensity
+    ext= 34 Polarization
+    ext= 35 StokesV_Magnitude
+    ext= 36 Fitting_Attribute
+    ext= 37 Number_of_Iterations
+    ext= 38 X_Coordinate
+    ext= 39 Y_Coordinate
+    ext= 40 Times
+    ext= 41 Mechanical_Slit_Position
+    ext= 42 Scattered_Light_Profile
+
+ 
+
+SOME BASIC INFORMATION ABOUT MERLIN
+
+MERLIN is a flexible code that may be used on data from a variety of sources. It performs a least-squares fitting of the Stokes profiles using the Milne-Eddington atmospheric approximation that allows for a linear variation of the source function along the line-of-sight, but holds the magnetic field vector, line strength, Doppler shift, line broadening, magnetic fill fraction (or scattered light fraction) constant along the line-of-sight. The Levenberg-Marquardt algorithm least-squares fitting is preceeded by an estimate of global initial values for [field strength, Doppler shift, and magnetic fill fraction] based upon the genetic algorithm. The other fit parameters are initialized with simpler procedures.
+
+MERLIN APPLICATION TO HINODE/SP DATA
+
+Routine inversions are performed on Hinode SOT/SP with the following characteristics:
+
+    Stokes profiles for both Fe I 630nm line are fit. Profiles are fit for only the wavelength range +/-0.30 Angstroms from the respective line centers.
+    Macroturbulence is held fixed at 0.7083 km/s, corresponding to the nearly Gaussian SP spectral response function (FWHM = 24.8 mA). No additional macroturbulence of solar origin is assumed.
+    The scattered light profile for each map is computed from the average of low polarization profiles included in that map. Profiles whose net polarization [sqrt(Q^2 + U^2 + V^2)/Ic] integrated over both lines falls below 0.35% are included in this average.
+    The scattered light profile is allowed to shift in wavelength through a least-squares minimization.
+    The SOT/SP inversions solve for the fill fraction f, where the observed Stokes I profile I_obs is fitted with [f*I_mag +(1-f)*I_scatt], where I_mag is the magetized component and I_scatt is the scattered light profile. The quantity f is output as the variable SALPHA.
+    Inversions are limited to a maximum field strength of 5000 Gauss.
+    No attempt is made to resolve the 180-degree azimuth ambiguity. Azimuths, as well as field inclinations, are reported between 0 and 180 degrees. The azimuths are positive clockwise from solar west.
+    Doppler broadening of the line is limited between 20 < Dopplerwidth < 90 mA.
+    Line damping is limited to 0 < damping < 1.5*Dopplerwidth.
+    Line strength relative to continuum opacity is limited to 0.01 < eta0 < 100.
+    Source function surface value (B_zero) and gradient (B_1) are given in data units.
+    Shifts of the 630.15 and 630.25 nm lines, as well as the shift of the scattered light profile (SDELTA) are given in km/sec. No absolute wavelength reference is assumed for either line. All shifts are given as increasing with increasing wavelength (redshifts).
+    The scattered light shift is relative to the unshifted mean scattered light spectral profile. it is limited to -10 < SDELTA < 10 km/sec.
+    The continuum intensity in the inversion results (ICONT) corresponds to the continuum of the fitted profile. The fits are restricted to +/-300 mA from line center, so ICONT can depart substantially from the actual continuum. The measures of continuum intensity from the Level1 processing should be used instead of ICONT for most scientific analysis purposes.
+    Standard errors of the inversion are included for each pixel for each of the 12 inversion parameters, BUT AT THIS TIME THESE STANDARD ERRORS ARE INCORRECT AND SHOULD NOT BE USED.
+    The inversion reports its final status in the index RCONV, and also the number of iterations (NITER), and various measures of the chisquare of the fit. The status index RCONV indicates the mode for exit from the iteration:
+        UNSET_INVERSION_NOT_PERFORMED = 0
+        REACHED_MAX_ITERATIONS = 1
+        REACHED_MAX_FAILURES = 2
+        REACH_CONVERGENCE_CRITERIA = 3
+        LAMBDA_GREATER_THAM_MAX_ALLOWED = 4
+        LAMBDA_SMALLER_THAM_MIN_ALLOWED = 5
+        NOTHING_TO_DO = 6 
+
+ 

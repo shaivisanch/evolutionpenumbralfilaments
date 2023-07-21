@@ -16,3 +16,5 @@ June 2022 - July 2023
 **Results:** It is found that on the filament, the continuum intensity peaks at the head and decreases down the tail. The magnetic inclination decreases from the head to the tail and the inclination in the z direction seems to increase. Over time, these trends seem to be consistent as the filament moves inwards toward the umbra.
 
 **Key Words:** Sun – photosphere – sunspots – magnetic field – penumbra
+
+hi
